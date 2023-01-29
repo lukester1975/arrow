@@ -1755,6 +1755,7 @@ class ARROW_EXPORT FieldRef : public util::EqualityComparable<FieldRef> {
   std::string ToDotPath() const;
 
   bool Equals(const FieldRef& other) const { return impl_ == other.impl_; }
+  bool operator==(const FieldRef& other) const { return Equals(other); }
 
   std::string ToString() const;
 
