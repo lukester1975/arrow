@@ -1160,6 +1160,13 @@ macro(build_snappy)
       ${EP_COMMON_CMAKE_ARGS} -DSNAPPY_BUILD_TESTS=OFF -DSNAPPY_BUILD_BENCHMARKS=OFF
       "-DCMAKE_INSTALL_PREFIX=${SNAPPY_PREFIX}")
 
+  find_package(Patch)
+  if(Patch_FOUND)
+    set(SNAPPY_PATCH_COMMAND
+        ${Patch_EXECUTABLE} "<SOURCE_DIR>/CMakeLists.txt"
+        "${CMAKE_SOURCE_DIR}/build-support/snappy-fix-clang-cl.patch")
+  endif()
+
   externalproject_add(snappy_ep
                       ${EP_COMMON_OPTIONS}
                       BUILD_IN_SOURCE 1
@@ -1167,6 +1174,7 @@ macro(build_snappy)
                       URL ${SNAPPY_SOURCE_URL}
                       URL_HASH "SHA256=${ARROW_SNAPPY_BUILD_SHA256_CHECKSUM}"
                       CMAKE_ARGS ${SNAPPY_CMAKE_ARGS}
+                      PATCH_COMMAND ${SNAPPY_PATCH_COMMAND}
                       BUILD_BYPRODUCTS "${SNAPPY_STATIC_LIB}")
 
   file(MAKE_DIRECTORY "${SNAPPY_PREFIX}/include")
