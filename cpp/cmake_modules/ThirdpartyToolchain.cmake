@@ -1591,6 +1591,13 @@ macro(build_protobuf)
         BUILD_COMMAND
         ${PROTOBUF_BUILD_COMMAND})
   else()
+    find_package(Patch)
+    if(Patch_FOUND)
+      set(PROTOBUF_PATCH_COMMAND
+          ${Patch_EXECUTABLE} "<SOURCE_DIR>/CMakeLists.txt"
+          "${CMAKE_SOURCE_DIR}/build-support/protobuf-clang-cl-bigobj.patch")
+    endif()
+
     # Strip lto flags (which may be added by dh_auto_configure)
     # See https://github.com/protocolbuffers/protobuf/issues/7092
     set(PROTOBUF_C_FLAGS ${EP_C_FLAGS})
@@ -1620,6 +1627,7 @@ macro(build_protobuf)
                       ${EP_COMMON_OPTIONS} ${PROTOBUF_EXTERNAL_PROJECT_ADD_ARGS}
                       BUILD_BYPRODUCTS "${PROTOBUF_STATIC_LIB}" "${PROTOBUF_COMPILER}"
                       BUILD_IN_SOURCE 1
+                      PATCH_COMMAND ${PROTOBUF_PATCH_COMMAND}
                       URL ${PROTOBUF_SOURCE_URL}
                       URL_HASH "SHA256=${ARROW_PROTOBUF_BUILD_SHA256_CHECKSUM}")
 
